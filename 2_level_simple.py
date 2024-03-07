@@ -109,30 +109,34 @@ solver.Minimize(objective)
 status = solver.Solve()
 if status == pywraplp.Solver.OPTIMAL:
     print('Objective value =', solver.Objective().Value())
+    # print the optimal solution
+    for i, j in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_FACTORIES)):
+        print(f"x_{i}_{j} = {x[i, j].solution_value()}")
 
-# print the optimal solution
-for i, j in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_FACTORIES)):
-    print(f"x_{i}_{j} = {x[i, j].solution_value()}")
+    for i, j, k in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_FACTORIES), range(AMOUNT_OF_STOCKS)):
+        print(f"y_{i}_{j}_{k} = {y[i, j, k].solution_value()}")
 
-for i, j, k in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_FACTORIES), range(AMOUNT_OF_STOCKS)):
-    print(f"y_{i}_{j}_{k} = {y[i, j, k].solution_value()}")
+    for i, k, l in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_STOCKS), range(AMOUNT_OF_SHOPS)):
+        print(f"z_{i}_{k}_{l} = {z[i, k, l].solution_value()}")
+else:
+    print('NO SOLUTION')
+    
 
-for i, k, l in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_STOCKS), range(AMOUNT_OF_SHOPS)):
-    print(f"z_{i}_{k}_{l} = {z[i, k, l].solution_value()}")
+
 
     
 print("All input data")
 print("Production costs")
 print(production_costs)
-print("transportation costs from factory to stock")
+print("Transportation costs from factory to stock")
 print(transportation_costs_from_factory_to_stock)
-print("transportation costs from stock to shop")
+print("Transportation costs from stock to shop")
 print(transportation_costs_from_stock_to_shop)
-print("minimum quantity")
+print("Minimum quantity")
 print(minimum_quantity)
-print("capacity stock")
+print("Capacity stock")
 print(capacity_stock)
-print("capacity shops")
+print("Capacity shops")
 print(capacity_shop)
 
 
