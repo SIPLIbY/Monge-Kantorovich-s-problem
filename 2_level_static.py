@@ -1,43 +1,41 @@
+#https://ru.overleaf.com/project/64233d28ca81fd4da7f1afad
+
 import numpy as np
 import itertools
 import random
 from ortools.linear_solver import pywraplp
 import pandas as pd
+from utility import generate_production_costs, generate_transportation_costs_from_factory_to_stock, generate_transportation_costs_from_stock_to_shop, generate_minimum_quantity, generate_capacity_stock, generate_capacity_shops
 
 # Set the random seed
-np.random.seed(42)
-random.seed(42)
+# np.random.seed(43)
+# random.seed(43)
 
 
-AMOUNT_OF_PRODUCTS = 10
-AMOUNT_OF_FACTORIES = 1
-AMOUNT_OF_STOCKS = 1
+AMOUNT_OF_PRODUCTS = 2
+AMOUNT_OF_FACTORIES = 2
+AMOUNT_OF_STOCKS = 2
 AMOUNT_OF_SHOPS = 1
 
 
 # production cost of the product i on the factory j
-def generate_production_costs():
-    return np.random.randint(10, 20, (AMOUNT_OF_PRODUCTS, AMOUNT_OF_FACTORIES))
+production_costs = generate_production_costs(AMOUNT_OF_PRODUCTS, AMOUNT_OF_FACTORIES)
 
 # transportation cost of the product i from the factory j to the stock k
-def generate_transportation_costs_from_factory_to_stock():
-    return np.random.randint(1, 10, (AMOUNT_OF_FACTORIES, AMOUNT_OF_STOCKS))
+transportation_costs_from_factory_to_stock = generate_transportation_costs_from_factory_to_stock(AMOUNT_OF_FACTORIES, AMOUNT_OF_STOCKS)
 
 # transportation cost of the unit of product from the stock k to the shop l
-def generate_transportation_costs_from_stock_to_shop():
-    return np.random.randint(10, 15, (AMOUNT_OF_STOCKS, AMOUNT_OF_SHOPS))
+transportation_costs_from_stock_to_shop = generate_transportation_costs_from_stock_to_shop(AMOUNT_OF_STOCKS, AMOUNT_OF_SHOPS)
 
 # demand for the product i in the shop l
-def generate_minimum_quantity():
-    return np.random.randint(0, 4, (AMOUNT_OF_PRODUCTS, AMOUNT_OF_SHOPS))
+minimum_quantity = generate_minimum_quantity(AMOUNT_OF_PRODUCTS, AMOUNT_OF_SHOPS)
 
 # capacity of the stock k
-def generate_capacity_stock():
-    return np.random.randint(100, 200, (AMOUNT_OF_STOCKS))
+capacity_stock = generate_capacity_stock(AMOUNT_OF_STOCKS)
 
 # capacity of the shop l
-def generate_capacity_shops():
-    return np.random.randint(30, 40, (AMOUNT_OF_SHOPS))
+capacity_shop = generate_capacity_shops(AMOUNT_OF_SHOPS)
+
 
 
 def get_solver():
@@ -66,35 +64,29 @@ for i, k, l in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_STOC
 
 
 #capacity stock constraint
-capacity_stock = generate_capacity_stock()
 for k in range(AMOUNT_OF_STOCKS):
     solver.Add(sum(y[i, j, k] for i, j in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_FACTORIES)) ) <= capacity_stock[k])
 
     
 #capacity shop constraint
-capacity_shop = generate_capacity_shops()
 for l in range(AMOUNT_OF_SHOPS):
     solver.Add(sum(z[i, k, l] for i, k in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_STOCKS)) ) <= capacity_shop[l])
 
 
 #flow constraint
 for i, j in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_FACTORIES)):
-    solver.Add(sum(y[i, j, k] - x[i, j] for k in (range(AMOUNT_OF_STOCKS))) == 0)
+    solver.Add(sum(y[i, j, k] for k in (range(AMOUNT_OF_STOCKS))) - x[i, j]  == 0)
 
 #flow constraint
 for i, k in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_STOCKS)):
     solver.Add(sum(z[i, k, l] for l in range(AMOUNT_OF_SHOPS)) - sum(y[i, j, k] for j in range(AMOUNT_OF_FACTORIES)) == 0)
 
 #add demand constraint
-minimum_quantity = generate_minimum_quantity()
 for i, l in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_SHOPS)):
     solver.Add(sum(z[i, k, l] for k in range(AMOUNT_OF_STOCKS)) >= minimum_quantity[i, l])
 
 
 #objective function
-production_costs = generate_production_costs()
-transportation_costs_from_factory_to_stock = generate_transportation_costs_from_factory_to_stock()
-transportation_costs_from_stock_to_shop = generate_transportation_costs_from_stock_to_shop()
 
 
 #define objective function
@@ -123,7 +115,9 @@ else:
     
 
 
-
+#print amount of constraints
+print("Amount of constraints", solver.NumConstraints())
+print("Amount of variables", solver.NumVariables())
     
 print("All input data")
 print("Production costs")
