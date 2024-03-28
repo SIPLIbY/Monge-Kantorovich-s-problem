@@ -22,10 +22,8 @@ AMOUNT_OF_SHOPS = 1
 
 CONFIDENCE_LEVEL = 0.95
 
-
 lambda_param = 15
 
-demand_estimation = get_estimation(lambda_param, CONFIDENCE_LEVEL)
 
 # production cost of the product i on the factory j
 production_costs = generate_production_costs(AMOUNT_OF_PRODUCTS, AMOUNT_OF_FACTORIES)
@@ -49,7 +47,30 @@ remains = np.zeros((AMOUNT_OF_PRODUCTS, AMOUNT_OF_SHOPS))
 remains_on_each_iteration = []
 objective_values = []
 
+demand_history = []
+previous_supply = {}
+
+
 for epoch in range(EPOCHS):
+    #get real demand
+    demand = generate_minimum_quantity(AMOUNT_OF_PRODUCTS, AMOUNT_OF_SHOPS, lambda_param)
+    
+    demand_history.append(np.asarray(demand).mean())
+
+    #get the estimation of the demand
+    mean_value = round(np.asarray(demand_history.copy()).mean())
+    
+
+    demand_estimation = get_estimation(mean_value, CONFIDENCE_LEVEL)
+
+    #check and update the remains
+    #if epoch is first so dont update the remains
+    if epoch != 0:
+        
+        for i, l in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_SHOPS)):
+            remains[i, l] += sum(previous_supply[i, k, l] for k in range(AMOUNT_OF_STOCKS)) - demand[i, l]
+            
+            remains[i, l] = 0 if remains[i, l] < 0 else remains[i, l]
 
     def get_solver():
         solver =pywraplp.Solver.CreateSolver('SCIP')
@@ -106,8 +127,7 @@ for epoch in range(EPOCHS):
 
     status = solver.Solve()
 
-    #get real demand
-    demand = generate_minimum_quantity(AMOUNT_OF_PRODUCTS, AMOUNT_OF_SHOPS, lambda_param)
+    
 
     z_copy = z.copy()
 
@@ -117,21 +137,25 @@ for epoch in range(EPOCHS):
     print(f"EPOCH {epoch+1}")
     for i, l in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_SHOPS)):
         print(f"Remains product {i} in shop {l} is {remains[i, l]}")
-        print(f"Actual demand of product {i} in the shop is {l}", demand[i, l])
-        print(f"Total delivered product {i} to the shop {l} is ", sum(z_copy[i, k, l].solution_value() for k in range(AMOUNT_OF_STOCKS)))
+        print(f"Actual demand of product {i} in the shop{l} is ", demand[i, l])
+        print(f"Total delivered product {i} to the shop {l} is ", sum(previous_supply[i, k, l] for k in range(AMOUNT_OF_STOCKS)) if epoch > 0 else "N/A")
+        print(f"Current solution to deliver product {i} to the shop {l} with amount", sum(z_copy[i, k, l].solution_value() for k in range(AMOUNT_OF_STOCKS)))
+        print(f"Current mean demand of product {i} is ", mean_value)
+        print(f"Current estimation of demand of product {i} is ", demand_estimation)
         print('\n')
     
     print("\n\n")
-    #check and update the remains
-    for i, l in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_SHOPS)):
-        remains[i, l] += sum(z_copy[i, k, l].solution_value() for k in range(AMOUNT_OF_STOCKS)) - demand[i, l]
-        
-        remains[i, l] = 0 if remains[i, l] < 0 else remains[i, l]
+    
+    
+    
     
     objective_values.append(solver.Objective().Value())
     #to add last remains
     if epoch == EPOCHS - 1:
         remains_on_each_iteration.append(remains.copy())
+
+    for i,k,l in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_STOCKS), range(AMOUNT_OF_SHOPS)):
+        previous_supply[i, k, l] = z[i, k, l].solution_value()
 
 
 
@@ -144,13 +168,14 @@ for i in range(AMOUNT_OF_PRODUCTS):
         plt.plot(remains_on_each_iteration[:, i, l], label=f"Product {i} in shop {l}")
 plt.legend()
 
+
 #mean value of objective function
 print(f"Mean of the objective values: {np.mean(objective_values)}")
 
 #plot the objective function
 plt.figure()
 plt.plot(objective_values)
-plt.title("Without delay")
+plt.title("With Delay")
 plt.xlabel("Epoch")
 plt.ylabel("Objective value")
 plt.show()
