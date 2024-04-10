@@ -49,6 +49,9 @@ def solution(epochs, amount_of_products, amount_of_factories, amount_of_stocks, 
     remains_shop_on_each_iteration = []
     remain_stock_on_each_iteration = []
 
+    unsold_products_shop = []
+    unsold_products_stock = []
+
     objective_values = []
 
     demand_history_for_shop = []
@@ -77,6 +80,11 @@ def solution(epochs, amount_of_products, amount_of_factories, amount_of_stocks, 
             for i, l in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_SHOPS)):
                 remains_shop[i, l] += sum(previous_supply[i, k, l] for k in range(AMOUNT_OF_STOCKS)) - demand[i, l]
                 
+                if remains_shop[i, l] < 0:
+                    unsold_products_shop.append(abs(remains_shop[i, l]))
+                else:
+                    unsold_products_shop.append(0)
+
                 remains_shop[i, l] = 0 if remains_shop[i, l] < 0 else remains_shop[i, l]
 
         def get_solver():
@@ -150,8 +158,10 @@ def solution(epochs, amount_of_products, amount_of_factories, amount_of_stocks, 
         for i, k in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_STOCKS)):
             remain_stock[i, k] += sum(y[i, j, k].solution_value() for j in range(AMOUNT_OF_FACTORIES)) - sum(z[i, k, l].solution_value() for l in range(AMOUNT_OF_SHOPS))
             if remain_stock[i, k] < 0:
-                
+                unsold_products_stock.append(abs(remain_stock[i, k]))
                 remain_stock[i, k] = 0
+            else:
+                unsold_products_stock.append(0)
         
         # for i,k in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_STOCKS)):
         #     print(f"Remains_stock product {i} in stock {k} is {remain_stock[i, k]}")
@@ -193,7 +203,7 @@ def solution(epochs, amount_of_products, amount_of_factories, amount_of_stocks, 
     remain_stock_on_each_iteration = np.array(remain_stock_on_each_iteration)
     objective_values = np.array(objective_values)
 
-    return remains_shop_on_each_iteration, remain_stock_on_each_iteration, objective_values
+    return remains_shop_on_each_iteration, remain_stock_on_each_iteration, objective_values, unsold_products_shop, unsold_products_stock
 
 
 

@@ -20,19 +20,19 @@ def generate_minimum_quantity(Amount_of_products, Amount_of_shops, lambda_param=
     return np.random.poisson(lambda_param, (Amount_of_products, Amount_of_shops))
 
 def generate_capacity_stock(Amount_of_stocks):
-    return np.random.randint(30, 50, (Amount_of_stocks))
+    return np.random.randint(3000, 5000, (Amount_of_stocks))
 
 def generate_capacity_shops(Amount_of_shops):
-    return np.random.randint(30, 40, (Amount_of_shops))
+    return np.random.randint(3000, 4000, (Amount_of_shops))
 
 def generate_remains(Amount_of_products, Amount_of_shops):
     return np.random.randint(0, 5, (Amount_of_products, Amount_of_shops))
 
 def generate_factory_limit(Amount_of_factories):
-    return np.random.randint(50, 100, (Amount_of_factories))
+    return np.random.randint(500, 1000, (Amount_of_factories))
 
-def generate_penalty_stock(Amount_of_stocks):
-    return np.random.randint(10, 20, (Amount_of_stocks))
+# def generate_penalty_stock(Amount_of_stocks):
+#     return np.random.randint(10, 20, (Amount_of_stocks))
 
-def generate_penalty_shop(Amount_of_shops):
-    return np.random.randint(5, 10, (Amount_of_shops)) 
+# def generate_penalty_shop(Amount_of_shops):
+#     return np.random.randint(5, 10, (Amount_of_shops)) 
