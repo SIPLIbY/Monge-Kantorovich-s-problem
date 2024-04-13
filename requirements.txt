@@ -1,0 +1,6 @@
+numpy
+ortools==9.9.3963
+pandas
+matplotlib
+statsmodels==0.14.1
+scipy

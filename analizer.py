@@ -55,14 +55,17 @@ AMOUNT_OF_SHOPS = 1
 
 CONFIDENCE_LEVEL_SHOP = 0.95
 CONFIDENCE_LEVEL_STOCK = 0.5
+#iterate with gap 0.05 from 0.5 to 0.95
+
+
 
 MARGINALITY = 0.07
-PUNISHMENT_SHOP = 0.001
-PUNISHMENT_STOCK = 0.002
+PUNISHMENT_SHOP = 0.02
+PUNISHMENT_STOCK = 0.01
 
 lambda_param = 20
 # Возможные значения параметров
-values = [1, 10, 100]
+values = [1, 10]
 
 # remains_shop_on_each_iteration, remain_stock_on_each_iteration, objective_values, lost_products_shop, lost_products_stock = solution(EPOCHS, AMOUNT_OF_PRODUCTS, AMOUNT_OF_FACTORIES, AMOUNT_OF_STOCKS, AMOUNT_OF_SHOPS, CONFIDENCE_LEVEL_SHOP, CONFIDENCE_LEVEL_STOCK, lambda_param)
 # #plot objective values
