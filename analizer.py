@@ -47,7 +47,7 @@ def calculate_loss(array, marginality):
 
 
 
-EPOCHS = 10
+EPOCHS = 1000
 # AMOUNT_OF_PRODUCTS = 1
 # AMOUNT_OF_FACTORIES = 1
 # AMOUNT_OF_STOCKS = 1
