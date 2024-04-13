@@ -66,11 +66,11 @@ PUNISHMENT_STOCK = 0.01
 lambda_param = 20
 
 #возможные значения CONFIDENCE_LEVEL_SHOP and CONFIDENCE_LEVEL_STOCK
-# values_confidence = [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
-values_confidence = [0.5, 0.95]
+values_confidence = [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
+# values_confidence = [0.5, 0.95]
 
 # Возможные значения параметров
-values = [1, 2]
+values = [1, 10, 100]
 
 # remains_shop_on_each_iteration, remain_stock_on_each_iteration, objective_values, lost_products_shop, lost_products_stock = solution(EPOCHS, AMOUNT_OF_PRODUCTS, AMOUNT_OF_FACTORIES, AMOUNT_OF_STOCKS, AMOUNT_OF_SHOPS, CONFIDENCE_LEVEL_SHOP, CONFIDENCE_LEVEL_STOCK, lambda_param)
 # #plot objective values
@@ -148,11 +148,13 @@ for products in values:
                         
                         #plot objective values
                         plt.plot(objective_values)
+                        plt.title(f"confidence_level_shop_{CONFIDENCE_LEVEL_SHOP}__stock_{CONFIDENCE_LEVEL_STOCK}")
                         plt.savefig(f"{path}/objective_shop_{CONFIDENCE_LEVEL_SHOP}__stock_{CONFIDENCE_LEVEL_STOCK}.png")
                         plt.close()
 
                         #plot losses
                         plt.plot(losses)
+                        plt.title(f"confidence_level_shop_{CONFIDENCE_LEVEL_SHOP}__stock_{CONFIDENCE_LEVEL_STOCK}")
                         plt.savefig(f"{path}/loss_shop_{CONFIDENCE_LEVEL_SHOP}__stock_{CONFIDENCE_LEVEL_STOCK}.png")
                         plt.close()
                         
