@@ -58,6 +58,7 @@ def solution(epochs, amount_of_products, amount_of_factories, amount_of_stocks, 
     demand_history_for_stock = []
 
     demand_estimation_stock = 0
+    demand_estimation_shop_history = []
 
     previous_supply = {}
 
@@ -67,10 +68,12 @@ def solution(epochs, amount_of_products, amount_of_factories, amount_of_stocks, 
         demand = generate_minimum_quantity(AMOUNT_OF_PRODUCTS, AMOUNT_OF_SHOPS, lambda_param)
         demand_history_for_shop.append(np.asarray(demand).mean())
         mean_value = round(np.asarray(demand_history_for_shop.copy()).mean())
-        demand_estimation_shop = get_estimation(mean_value, CONFIDENCE_LEVEL_SHOP)
+        demand_estimation_shop = round(np.quantile(demand_history_for_shop, CONFIDENCE_LEVEL_SHOP))
+
+        demand_estimation_shop_history.append(amount_of_shops*demand_estimation_shop)
 
 
-        demand_estimation_stock = round(np.percentile(demand_history_for_shop, CONFIDENCE_LEVEL_STOCK*100) if len(demand_history_for_shop) != 0 else demand_estimation_shop)
+        demand_estimation_stock = round(np.quantile(demand_estimation_shop_history, CONFIDENCE_LEVEL_STOCK) if len(demand_estimation_shop_history) != 0 else demand_estimation_shop)
         
 
         #check and update the remains_shop
