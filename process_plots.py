@@ -54,20 +54,7 @@ for products in values:
                         image_list_loss.append(img_loss)
 
 
-                        path = f"{path_folder}/products_{products}/factories_{factories}/stock_{stock}/shop_{shop}"
-
-                        path_for_images = path + "/images"
-                        if not os.path.exists(path_for_images):
-                            os.makedirs(path_for_images)
-
-                        current_dst = os.path.join(path, f"objective_shop_{CONFIDENCE_LEVEL_SHOP}__stock_{CONFIDENCE_LEVEL_STOCK}.png")
-                        new_file = os.path.join(path_for_images, f"objective_shop_{CONFIDENCE_LEVEL_SHOP}__stock_{CONFIDENCE_LEVEL_STOCK}.png")
-                        shutil.move(current_dst, new_file)
-
-                        current_dst = os.path.join(path, f"loss_shop_{CONFIDENCE_LEVEL_SHOP}__stock_{CONFIDENCE_LEVEL_STOCK}.png")
-                        new_file = os.path.join(path_for_images, f"loss_shop_{CONFIDENCE_LEVEL_SHOP}__stock_{CONFIDENCE_LEVEL_STOCK}.png")
-                        shutil.move(current_dst, new_file)
-
+                        
                         counter += 1
                 
                 # Создаем конкатенированное изображение из списка
@@ -81,7 +68,24 @@ for products in values:
                     if final_image:
                         final_image.save(os.path.join(path, 'loss_image.png'))
 
+counter = 0
 
+for products in values:
+    for factories in values:
+        for stock in values:
+            for shop in values:
+                        path = f"{path_folder}/products_{products}/factories_{factories}/stock_{stock}/shop_{shop}"
+                        print("Progress:", 100*counter/total_iterations,"%")
+                        path_for_images = path + "/images"
+                        if not os.path.exists(path_for_images):
+                            os.makedirs(path_for_images)
 
+                        current_dst = os.path.join(path, f"objective_shop_{CONFIDENCE_LEVEL_SHOP}__stock_{CONFIDENCE_LEVEL_STOCK}.png")
+                        new_file = os.path.join(path_for_images, f"objective_shop_{CONFIDENCE_LEVEL_SHOP}__stock_{CONFIDENCE_LEVEL_STOCK}.png")
+                        shutil.move(current_dst, new_file)
+
+                        current_dst = os.path.join(path, f"loss_shop_{CONFIDENCE_LEVEL_SHOP}__stock_{CONFIDENCE_LEVEL_STOCK}.png")
+                        new_file = os.path.join(path_for_images, f"loss_shop_{CONFIDENCE_LEVEL_SHOP}__stock_{CONFIDENCE_LEVEL_STOCK}.png")
+                        shutil.move(current_dst, new_file)
 
                         
