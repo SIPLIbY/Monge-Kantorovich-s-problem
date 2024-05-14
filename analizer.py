@@ -73,7 +73,7 @@ lambda_param = 20
 
 #возможные значения CONFIDENCE_LEVEL_SHOP and CONFIDENCE_LEVEL_STOCK
 values_confidence = [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
-# values_confidence = [0.5, 0.95]
+
 
 # Возможные значения параметров
 values = [1, 10, 100]
@@ -87,13 +87,13 @@ values = [1, 10, 100]
 # variance = calc_variance(objective_values)
 
 counter = 0
-total_iterations = (len(values_confidence) ** 2)
+total_iterations = (len(values_confidence) ** 2) 
 print("Total iterations: ", total_iterations)
 
 # Перебираем все возможные комбинации параметров
 products = 10
-factories = 1
-stock = 10
+factories = 10
+stock = 1
 shop = 10
 
 

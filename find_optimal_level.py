@@ -52,9 +52,9 @@ def model_comparing():
 
 def mean_heteroscedasticity_p_value():
     products = 10
-    factories = 1
+    factories = 10
     stock = 1
-    shop = 10
+    shop = 1
     # for products in values:
     #     for factories in values:
     #         for stock in values:
@@ -98,4 +98,4 @@ def draw_heat_map():
     #save
     plt.savefig("heatmap.png")
 
-mean_heteroscedasticity_p_value()
+find_optimal_level()

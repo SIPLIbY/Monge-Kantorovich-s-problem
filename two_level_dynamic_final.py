@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
 
 def solution(epochs, amount_of_products, amount_of_factories, amount_of_stocks, amount_of_shops, confidence_level_shop, confidence_level_stock, _lambda_param):
     # Set the random seed
-    np.random.seed(43)
-    random.seed(43)
+    np.random.seed(42)
+    random.seed(42)
 
     EPOCHS = epochs
     AMOUNT_OF_PRODUCTS = amount_of_products
