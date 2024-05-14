@@ -104,7 +104,7 @@ MAX_VAR_DEMAND = 2
 # supply = generate_supply(supply_nodes, itemsets, MIN_PROCUREMENT_COST, MAX_PROCUREMENT_COST)
 # demand_nodes = generate_demand_nodes(DEMAND_NODE_NUMBER, itemsets, MIN_MEAN_DEMAND, MAX_MEAN_DEMAND, MIN_VAR_DEMAND, MAX_VAR_DEMAND)
 
-shipping = pd.DataFrame({"DC_id":[0],  "supply_node_id":[0],  "cost":[3]})
+shipping = pd.DataFrame({"DC_id":[0],  "supply_node_id":[0],  "cost":[4]})
 itemsets = pd.DataFrame({"itemset_id":[0],  "sku_id":[0]})
 supply_nodes = pd.DataFrame({"supply_node_id":[0],"capacity":[30]})
 supply = pd.DataFrame({"node_id":[0],  "sku_id":[0],  "cost":[3], "current_quantity":[3]})
