@@ -76,15 +76,15 @@ def generate_demand_nodes(demand_node_amount, itemsets, min_mean_demand=5, max_m
 
 
 
-SUPPLY_NODE_NUMBER = 3
-DEMAND_NODE_NUMBER = 3
+SUPPLY_NODE_NUMBER = 1
+DEMAND_NODE_NUMBER = 1
 
 MIN_SHIPPING_COST = 5
 MAX_SHIPPING_COST = 10
 
 
-MIN_CAPACITY_SUPPLY_NODE = 40
-MAX_CAPACITY_SUPPLY_NODE = 100
+MIN_CAPACITY_SUPPLY_NODE = 4
+MAX_CAPACITY_SUPPLY_NODE = 10
 
 ITEMSET_NUMBER = 1
 SKU_NUMBER = 2
@@ -104,27 +104,19 @@ MAX_VAR_DEMAND = 2
 # supply = generate_supply(supply_nodes, itemsets, MIN_PROCUREMENT_COST, MAX_PROCUREMENT_COST)
 # demand_nodes = generate_demand_nodes(DEMAND_NODE_NUMBER, itemsets, MIN_MEAN_DEMAND, MAX_MEAN_DEMAND, MIN_VAR_DEMAND, MAX_VAR_DEMAND)
 
-shipping = pd.DataFrame({"DC_id":[0,0,0,1,1,1,2,2,2],  "supply_node_id":[0,1,2,0,1,2,0,1,2],  "cost":[1,10,10,10,1,10,10,10,1]})
-itemsets = pd.DataFrame({"itemset_id":[0,0],  "sku_id":[0,1]})
-supply_nodes = pd.DataFrame({"supply_node_id":[0,1,2],"capacity":[10,10,10]})
-supply = pd.DataFrame({"node_id":[0,0,1,1,2,2],  "sku_id":[0,1,0,1,0,1],  "cost":[1,10,10,1,10,10], "current_quantity":[3,4,3,4,3,4]})
-demand_nodes = pd.DataFrame({"node_id":[0,1,2], "itemset_id":[0,0,0], "demand_mean":[4,5,6], "demand_variance":[0,0,0]})
+shipping = pd.DataFrame({"DC_id":[0],  "supply_node_id":[0],  "cost":[3]})
+itemsets = pd.DataFrame({"itemset_id":[0],  "sku_id":[0]})
+supply_nodes = pd.DataFrame({"supply_node_id":[0],"capacity":[30]})
+supply = pd.DataFrame({"node_id":[0],  "sku_id":[0],  "cost":[3], "current_quantity":[3]})
+demand_nodes = pd.DataFrame({"node_id":[0], "itemset_id":[0], "demand_mean":[10], "demand_variance":[0]})
 
-
+#print all values
 # print("SHIPPING", "\n",  shipping)
 # print("ITEMSETS","\n", itemsets)
 # print('SUPPLY_NODES', "\n",supply_nodes)
 # print("SUPPLY", "\n",supply)
 # print("DEMAND_NODES","\n", demand_nodes)
 
-
-# print(f"Shipping size: {shipping.shape[0]}")
-# print(f"Itemset size: {itemsets.shape[0]}")
-# print(f"Supply nodes size: {supply_nodes.shape[0]}")
-# print(f"Supply size: {supply.shape[0]}")
-# print(f"Demand nodes size: {demand_nodes.shape[0]}")
-#
-# print(itemsets)
 
 
 SUPPLY_NODE_LIST = list(supply_nodes.supply_node_id.unique())
@@ -158,7 +150,7 @@ for i, j, k in itertools.product(SUPPLY_NODE_LIST, DEMAND_NODE_LIST, ITEMSET_LIS
 
 for i, r in itertools.product(SUPPLY_NODE_LIST, SKU_LIST):
     y[i, r] = solver.IntVar(0, infty, f'y[{i}][{r}]')
-    v[i, r] = solver.IntVar(0, infty, f'v[{i}][{r}]')
+    
 
 
 for j, k in itertools.product(DEMAND_NODE_LIST, ITEMSET_LIST):
@@ -175,8 +167,6 @@ for i, j, k in itertools.product(SUPPLY_NODE_LIST, DEMAND_NODE_LIST, ITEMSET_LIS
     demand_int = demand_j_k['demand_mean']
     constraint.SetCoefficient(z[i, j, k], demand_int)
     constraint.SetCoefficient(x[i, j, k], -1)
-
-print('Number of constraints =', solver.NumConstraints())
 
 itemset_sku_tuples = list(itemsets.itertuples(index=False, name=None))
 supply_dict = supply.set_index(['node_id', 'sku_id']).to_dict('index')
@@ -196,7 +186,7 @@ for i, r in itertools.product(SUPPLY_NODE_LIST, SKU_LIST):
         if (k, r) in itemset_sku_tuples:
             constraint.SetCoefficient(x[i, j, k], -1)
 
-    constraint.SetCoefficient(v[i, r], -1)
+    
 
 item_set_sku_id_count = itemsets.groupby(['itemset_id'])['itemset_id'].count().to_dict()
 supply_node_capacity = supply_nodes.set_index('supply_node_id').to_dict('index')
@@ -206,9 +196,6 @@ for i in SUPPLY_NODE_LIST:
     for j, k in itertools.product(DEMAND_NODE_LIST, ITEMSET_LIST):
         constraint.SetCoefficient(x[i, j, k], item_set_sku_id_count[k])
 
-    for r in SKU_LIST:
-        constraint.SetCoefficient(v[i, r], 1)
-
 
 for i, r in itertools.product(SUPPLY_NODE_LIST, SKU_LIST):
     constraint = solver.RowConstraint(supply_dict[i, r]['current_quantity'], supply_dict[i, r]['current_quantity'], 'equation 4:')
@@ -216,7 +203,7 @@ for i, r in itertools.product(SUPPLY_NODE_LIST, SKU_LIST):
         if (k, r) in itemset_sku_tuples:
             constraint.SetCoefficient(x[i, j, k], 1)
     constraint.SetCoefficient(y[i, r], -1)
-    constraint.SetCoefficient(v[i, r], 1)
+    
 
 objective = solver.Objective()
 
@@ -269,12 +256,6 @@ if status == pywraplp.Solver.OPTIMAL:
 
         if (not print_only_nonzero) | (y[i, r].solution_value() != 0):
             print(y[i, r].name(), " = ", y[i, r].solution_value())
-    print()
-
-    for i, r in itertools.product(SUPPLY_NODE_LIST, SKU_LIST):
-
-        if (not print_only_nonzero) | (v[i, r].solution_value() != 0):
-            print(v[i, r].name(), " = ", v[i, r].solution_value())
     print()
 
 
