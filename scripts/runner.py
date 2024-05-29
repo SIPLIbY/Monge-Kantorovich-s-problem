@@ -11,68 +11,23 @@ import os
 
 path_to_folder = "simulations"
 
-def test_heteroscedasticity(array):
-    #delete first 10 values
-    array = array[10:]
-    y = array
-    x = np.arange(0, len(y), 1)
-    x = sm.add_constant(x)
-    model = sm.OLS(y, x)
-    results = model.fit()
-    
-    res = het_breuschpagan(results.resid, results.model.exog)
-    
-    
-    
-    return res[1], res[3]
 
-def calc_variance(array):
-    return np.var(array)
-
-
-def calc_mean(array):
-    return np.mean(array)
-
-
-def calculate_integral(array, start, end):
-    # Создаем массив x значений
-    x = np.linspace(start, end, len(array))
-    
-    # Вычисляем интеграл
-    integral = integrate.trapz(array, x)
-    
-    return integral    
-    
-
-def calculate_loss(array, marginality):
-    return sum(array) * marginality
-
-
-
-
+#simulation parameters
 EPOCHS = 1000
-# AMOUNT_OF_PRODUCTS = 1
-# AMOUNT_OF_FACTORIES = 1
-# AMOUNT_OF_STOCKS = 1
-# AMOUNT_OF_SHOPS = 1
-
-# CONFIDENCE_LEVEL_SHOP = 0.95
-# CONFIDENCE_LEVEL_STOCK = 0.5
-#iterate with gap 0.05 from 0.5 to 0.95
 
 
-
+#model parameters
 MARGINALITY = 0.07
 PUNISHMENT_SHOP = 0.02
 PUNISHMENT_STOCK = 0.01
 
-lambda_param = 20
+#parameter of poisson distribution
+LAMBDA = 20
 
-#возможные значения CONFIDENCE_LEVEL_SHOP and CONFIDENCE_LEVEL_STOCK
+
 values_confidence = [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
 
 
-# Возможные значения параметров
 values = [1, 10, 100]
 
 
@@ -81,10 +36,11 @@ values = [1, 10, 100]
 
 df = pd.DataFrame()
 
+
 for CONFIDENCE_LEVEL_SHOP in values_confidence:
     for CONFIDENCE_LEVEL_STOCK in values_confidence:
         
-        remains_shop_on_each_iteration, remain_stock_on_each_iteration, objective_values, lost_products_shop, lost_products_stock = solution(EPOCHS, products, factories, stock, shop, CONFIDENCE_LEVEL_SHOP, CONFIDENCE_LEVEL_STOCK, lambda_param)
+        remains_shop_on_each_iteration, remain_stock_on_each_iteration, objective_values, lost_products_shop, lost_products_stock = solution(EPOCHS, products, factories, stock, shop, CONFIDENCE_LEVEL_SHOP, CONFIDENCE_LEVEL_STOCK, LAMBDA)
         
         #create folder for saving results
         path = f"{path_to_folder}/products_{products}/factories_{factories}/stock_{stock}/shop_{shop}"
@@ -148,13 +104,45 @@ for CONFIDENCE_LEVEL_SHOP in values_confidence:
         plt.savefig(f"{path}/loss_shop_{CONFIDENCE_LEVEL_SHOP}__stock_{CONFIDENCE_LEVEL_STOCK}.png")
         plt.close()
         
-        #print progress
-        # print(f"products_{products}_factories_{factories}_stock_{stock}_shop_{shop} is done")
+
         counter += 1
         print(f'THATS ONLY {(counter/total_iterations) * 100}%')
 
 df.to_csv(f"{path}/test_results.csv", index=False)
 
+
+def test_heteroscedasticity(array):
+    #delete first 10 values
+    array = array[10:]
+    y = array
+    x = np.arange(0, len(y), 1)
+    x = sm.add_constant(x)
+    model = sm.OLS(y, x)
+    results = model.fit()
+    
+    res = het_breuschpagan(results.resid, results.model.exog)
+    
+    
+    
+    return res[1], res[3]
+
+def calc_variance(array):
+    return np.var(array)
+
+
+def calc_mean(array):
+    return np.mean(array)
+
+
+def calculate_integral(array, start, end):
+    x = np.linspace(start, end, len(array))
+    integral = integrate.trapz(array, x)    
+    
+    return integral    
+    
+
+def calculate_loss(array, marginality):
+    return sum(array) * marginality
 
 
 
