@@ -4,9 +4,7 @@ import numpy as np
 import itertools
 import random
 from ortools.linear_solver import pywraplp
-import pandas as pd
-from utility import generate_production_costs, generate_transportation_costs_from_factory_to_stock, generate_transportation_costs_from_stock_to_shop, generate_minimum_quantity, generate_capacity_stock, generate_capacity_shops
-from utility import get_estimation
+from utility import generate_production_costs, generate_transportation_costs_from_factory_to_stock, generate_transportation_costs_from_stock_to_shop, generate_minimum_quantity, generate_capacity_stock
 import matplotlib.pyplot as plt
 
 

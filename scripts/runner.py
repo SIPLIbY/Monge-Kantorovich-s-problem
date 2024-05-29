@@ -1,17 +1,15 @@
 import numpy as np
 import itertools
-import random
-from ortools.linear_solver import pywraplp
 import pandas as pd
 import matplotlib.pyplot as plt
-from two_level_dynamic import solution
-from statsmodels.stats.diagnostic import het_breuschpagan, het_white, het_goldfeldquandt
+from two_level_models.two_level_dynamic import solution
+from statsmodels.stats.diagnostic import het_breuschpagan
 import statsmodels.api as sm
 from scipy import integrate
 import os
 
-path_to_folder = "simulations"
 
+path_to_folder = "simulations"
 
 def test_heteroscedasticity(array):
     #delete first 10 values
@@ -23,8 +21,7 @@ def test_heteroscedasticity(array):
     results = model.fit()
     
     res = het_breuschpagan(results.resid, results.model.exog)
-    #use white another test
-    # res = het_goldfeldquandt(results.resid, results.model.exog)
+    
     
     
     return res[1], res[3]
@@ -78,23 +75,7 @@ values_confidence = [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
 # Возможные значения параметров
 values = [1, 10, 100]
 
-# remains_shop_on_each_iteration, remain_stock_on_each_iteration, objective_values, lost_products_shop, lost_products_stock = solution(EPOCHS, AMOUNT_OF_PRODUCTS, AMOUNT_OF_FACTORIES, AMOUNT_OF_STOCKS, AMOUNT_OF_SHOPS, CONFIDENCE_LEVEL_SHOP, CONFIDENCE_LEVEL_STOCK, lambda_param)
-# #plot objective values
-# plt.plot(objective_values)
-# plt.show()
 
-# #variance of objective values
-# variance = calc_variance(objective_values)
-
-counter = 0
-total_iterations = (len(values_confidence) ** 2) 
-print("Total iterations: ", total_iterations)
-
-# Перебираем все возможные комбинации параметров
-products = 10
-factories = 10
-stock = 1
-shop = 10
 
 
 

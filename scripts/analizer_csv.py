@@ -1,9 +1,7 @@
 import pandas as pd
 from scripts.two_level_models.two_level_static import solution
 import numpy as np
-import seaborn as sns
-from matplotlib.colors import LinearSegmentedColormap
-import matplotlib.pyplot as plt
+
 
 
 values = [1, 10]
