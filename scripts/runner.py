@@ -4,7 +4,7 @@ import random
 from ortools.linear_solver import pywraplp
 import pandas as pd
 import matplotlib.pyplot as plt
-from two_level_dynamic_final import solution
+from two_level_dynamic import solution
 from statsmodels.stats.diagnostic import het_breuschpagan, het_white, het_goldfeldquandt
 import statsmodels.api as sm
 from scipy import integrate

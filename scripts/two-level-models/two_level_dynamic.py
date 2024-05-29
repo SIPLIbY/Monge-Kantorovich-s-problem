@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 
 
 def solution(epochs, amount_of_products, amount_of_factories, amount_of_stocks, amount_of_shops, confidence_level_shop, confidence_level_stock, _lambda_param):
-    # Set the random seed
     np.random.seed(42)
     random.seed(42)
 
@@ -104,7 +103,6 @@ def solution(epochs, amount_of_products, amount_of_factories, amount_of_stocks, 
         y = {}
         z = {}
 
-        #defining the variables
         for i, j in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_FACTORIES)):
             x[i, j] = solver.IntVar(0, infty, f"x_{i}_{j}")
 
@@ -137,12 +135,12 @@ def solution(epochs, amount_of_products, amount_of_factories, amount_of_stocks, 
 
         
         
-        #define objective function
+
         objective = sum(production_costs[i][j] * x[i, j] for i, j in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_FACTORIES))) + \
                     sum(transportation_costs_from_factory_to_stock[j, k] * y[i, j, k] for i, j, k in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_FACTORIES), range(AMOUNT_OF_STOCKS))) + \
                     sum(transportation_costs_from_stock_to_shop[k, l] * z[i, k, l] for i, k, l in itertools.product(range(AMOUNT_OF_PRODUCTS), range(AMOUNT_OF_STOCKS), range(AMOUNT_OF_SHOPS)))
 
-        #minimize objective function
+
         solver.Minimize(objective)
         status = solver.Solve()
 
