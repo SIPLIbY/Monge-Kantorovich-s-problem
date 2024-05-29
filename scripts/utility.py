@@ -1,6 +1,9 @@
 import scipy.stats as stats
 from scipy.stats import poisson
 import numpy as np
+from statsmodels.stats.diagnostic import het_breuschpagan
+import statsmodels.api as sm
+from scipy import integrate
 
 
 def get_estimation(lambda_param, alpha):
@@ -31,8 +34,37 @@ def generate_remains(Amount_of_products, Amount_of_shops):
 def generate_factory_limit(Amount_of_factories):
     return np.random.randint(500, 1000, (Amount_of_factories))
 
-# def generate_penalty_stock(Amount_of_stocks):
-#     return np.random.randint(10, 20, (Amount_of_stocks))
 
-# def generate_penalty_shop(Amount_of_shops):
-#     return np.random.randint(5, 10, (Amount_of_shops)) 
+
+def test_heteroscedasticity(array):
+    #delete first 10 values
+    array = array[10:]
+    y = array
+    x = np.arange(0, len(y), 1)
+    x = sm.add_constant(x)
+    model = sm.OLS(y, x)
+    results = model.fit()
+    
+    res = het_breuschpagan(results.resid, results.model.exog)
+    
+    
+    
+    return res[1], res[3]
+
+def calc_variance(array):
+    return np.var(array)
+
+
+def calc_mean(array):
+    return np.mean(array)
+
+
+def calculate_integral(array, start, end):
+    x = np.linspace(start, end, len(array))
+    integral = integrate.trapz(array, x)    
+    
+    return integral    
+    
+
+def calculate_loss(array, marginality):
+    return sum(array) * marginality

@@ -3,10 +3,8 @@ import itertools
 import pandas as pd
 import matplotlib.pyplot as plt
 from two_level_models.two_level_dynamic import solution
-from statsmodels.stats.diagnostic import het_breuschpagan
-import statsmodels.api as sm
-from scipy import integrate
 import os
+from utility import calc_variance, calc_mean, test_heteroscedasticity, calculate_integral, calculate_loss
 
 
 path_to_folder = "simulations"
@@ -36,6 +34,8 @@ values = [1, 10, 100]
 
 df = pd.DataFrame()
 
+counter = 0
+total_iterations = (len(values_confidence) ** 2) * (len(values))**4
 
 for CONFIDENCE_LEVEL_SHOP in values_confidence:
     for CONFIDENCE_LEVEL_STOCK in values_confidence:
@@ -111,38 +111,7 @@ for CONFIDENCE_LEVEL_SHOP in values_confidence:
 df.to_csv(f"{path}/test_results.csv", index=False)
 
 
-def test_heteroscedasticity(array):
-    #delete first 10 values
-    array = array[10:]
-    y = array
-    x = np.arange(0, len(y), 1)
-    x = sm.add_constant(x)
-    model = sm.OLS(y, x)
-    results = model.fit()
-    
-    res = het_breuschpagan(results.resid, results.model.exog)
-    
-    
-    
-    return res[1], res[3]
 
-def calc_variance(array):
-    return np.var(array)
-
-
-def calc_mean(array):
-    return np.mean(array)
-
-
-def calculate_integral(array, start, end):
-    x = np.linspace(start, end, len(array))
-    integral = integrate.trapz(array, x)    
-    
-    return integral    
-    
-
-def calculate_loss(array, marginality):
-    return sum(array) * marginality
 
 
 
