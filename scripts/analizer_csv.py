@@ -1,5 +1,5 @@
 import pandas as pd
-from two_level_static import solution
+from scripts.two_level_models.two_level_static import solution
 import numpy as np
 import seaborn as sns
 from matplotlib.colors import LinearSegmentedColormap
@@ -70,32 +70,3 @@ def mean_heteroscedasticity_p_value():
 
 
 
-def draw_heat_map():
-    #
-    products = 1
-    factories = 10
-    stock = 10
-    shop = 1
-    #open csv file
-    df = pd.read_csv(f"simulations/products_{products}/factories_{factories}/stock_{stock}/shop_{shop}/test_results.csv")
-
-    #create df with columns confidence_level_shop and confidence_level_stock and integral_loss
-    heatmap = df.pivot(index="confidence_level_shop", columns="confidence_level_stock", values="integral_loss") 
-
-    #exp scale
-    
-
-    #import viridis color map
-    cmap=LinearSegmentedColormap.from_list('rg',["g", "w", "r"], N=256) 
-    
-
-    #make it rgb
-    sns.heatmap(heatmap, cmap=cmap)
-    plt.xlabel("beta")
-    plt.ylabel("alpha")
-    
-
-    #save
-    plt.savefig("heatmap.png")
-
-find_optimal_level()
