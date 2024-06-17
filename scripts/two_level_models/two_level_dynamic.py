@@ -142,6 +142,11 @@ def solution(epochs, amount_of_products, amount_of_factories, amount_of_stocks, 
         solver.Minimize(objective)
         status = solver.Solve()
 
+        if status != pywraplp.Solver.OPTIMAL:
+            print("The problem does not have an optimal solution")
+            return None
+        
+
         # print(f"EPOCH {epoch+1}")
 
         # for k in range(AMOUNT_OF_STOCKS):
