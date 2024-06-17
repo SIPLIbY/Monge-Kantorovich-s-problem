@@ -26,7 +26,7 @@ LAMBDA = 20
 values_confidence = [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
 
 
-values = [1, 10, 100]
+values = [100]
 
 
 
@@ -37,9 +37,14 @@ df = pd.DataFrame()
 counter = 0
 total_iterations = (len(values_confidence) ** 2) * (len(values))**4
 
+products = 100
+factories = 100
+stock = 100
+shop = 100
+
 for CONFIDENCE_LEVEL_SHOP in values_confidence:
     for CONFIDENCE_LEVEL_STOCK in values_confidence:
-        
+        print(f"confidence_level_shop_{CONFIDENCE_LEVEL_SHOP}__stock_{CONFIDENCE_LEVEL_STOCK}")
         remains_shop_on_each_iteration, remain_stock_on_each_iteration, objective_values, lost_products_shop, lost_products_stock = solution(EPOCHS, products, factories, stock, shop, CONFIDENCE_LEVEL_SHOP, CONFIDENCE_LEVEL_STOCK, LAMBDA)
         
         #create folder for saving results
